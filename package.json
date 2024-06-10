@@ -26,6 +26,12 @@
           }
         ]
       }
+    ],
+    "commands": [
+      {
+        "command": "l10n-participant.translate.example",
+        "title": "Run example Azure OpenAI translation"
+      }
     ]
   },
   "scripts": {
@@ -37,14 +43,18 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.90.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/vscode": "^1.90.0",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.4.5",
     "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0"
+    "@vscode/test-electron": "^2.4.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.2.0",
+    "openai": "^4.50.0"
   }
 }

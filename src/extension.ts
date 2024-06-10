@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { translatePhrases } from './azureIntegration';
 
 const PARTICIPANT_ID = 'l10n-participant.translator';
 
@@ -46,6 +47,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const participant = vscode.chat.createChatParticipant(PARTICIPANT_ID, handler);
 	context.subscriptions.push(participant);
+
+	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.example', async () => {
+		const phrases: string[] = ["Usar expresión regular", "Použit regulární výraz", "Использовать регулярное выражение"];
+		const answer = await translatePhrases(phrases);
+		vscode.window.showInformationMessage(answer ?? 'NULL');
+
+		const phrases2: string[] = ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"];
+		const answer2 = await translatePhrases(phrases2);
+		vscode.window.showInformationMessage(answer2 ?? 'NULL');
+	}));
 }
 
 // This method is called when your extension is deactivated
