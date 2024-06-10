@@ -1,6 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { fetchLanguagePacks } from './utils/fetchLanguagePacks';
+import { getLanguageFiles } from './utils/getLanguageFiles';
+import { getTranslationsStrings } from './utils/getTranslationsStrings';
 
 const PARTICIPANT_ID = 'l10n-participant.translator';
 
@@ -34,6 +37,14 @@ export function activate(context: vscode.ExtensionContext) {
 				for await (const fragment of chatResponse.text) {
 					stream.markdown(fragment);
 				}
+				const languagePacks = await fetchLanguagePacks();
+				const languageFiles =  await getLanguageFiles(languagePacks[0]);
+				let translationsStrings: { [key: string]: {} } = {};
+
+				languageFiles.map(async (languageFile: {path: string}) => {
+					translationsStrings[languageFile.path] = await getTranslationsStrings(languageFile);
+				});
+
 			} else {
 				stream.markdown('No model available for translation. Please try again later.');
 			}
