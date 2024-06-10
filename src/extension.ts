@@ -19,15 +19,18 @@ export function activate(context: vscode.ExtensionContext) {
 		request: vscode.ChatRequest,
 		context: vscode.ChatContext,
 		stream: vscode.ChatResponseStream,
-		token: vscode.CancellationToken
-	): Promise<MyChatResult> => {
+		token: vscode.CancellationToken): Promise<MyChatResult> => {
 		if (request.command === 'translate') {
 			stream.progress('Translating...');
 			const [model] = await vscode.lm.selectChatModels(MODEL_SELECTOR);
 			if (model) {
-				const messages = [
-					vscode.LanguageModelChatMessage.User('You are a translator. Your goal is to output a new language pack in the requested language based on the language pack file the user currently has open. Output a JSON object with the exact same keys in the exact same order as the first opened language pack, but with the values translated.'),
-					vscode.LanguageModelChatMessage.User('The user requests a language pack in the following language: ' + request.prompt)
+				const messages: vscode.LanguageModelChatMessage[] = [
+					vscode.LanguageModelChatMessage.User(`You are a translator. The phrases you translate will be related to Visual Studio Code, a code editor.
+						Your goal is to output a sentence in English given the same sentence in multiple languages.
+						Pick a concise translation that best captures the meaning of the original sentence.
+						Example input: Закрыть диалоговое окно, Zavřít dialogové okno, Cerrar cuadro de diálogo
+						Example output: Close Dialog`),
+					vscode.LanguageModelChatMessage.User(request.prompt),
 				];
 
 				const chatResponse = await model.sendRequest(messages, {}, token);
