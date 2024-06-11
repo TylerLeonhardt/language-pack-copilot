@@ -1,22 +1,18 @@
 import { LanguageBookCollection as LanguageBookCollection } from "./languageBookCollection";
 
-// TODO: We still want to recall which file the value came from
-
 // e.g. "vs/base/browser/ui/actionbar/actionViewItems"
-export type ScanChunkKey = string;
-
+type ScanChunkKey = string;
 // e.g. "alertErrorMessage": ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"]
-export type ScanChunk = Record<string, string[]>;
+type ScanChunk = Record<string, string[]>;
 
-export type ScanChunkCollection = Record<ScanChunkKey, ScanChunk>;
+type ScanChunkFile = Record<ScanChunkKey, ScanChunk>;
+
+type FileName = string;
+type ScanChunkCollection = Record<FileName, ScanChunkFile>;
 
 /**
  * A book collection is a collection of language packs where the keys are language packs.
- * A scan is a record of keys to lists of values.
- * For example:
- *  "vs/base/browser/ui/actionbar/actionViewItems": {
- *      "alertErrorMessage": ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"]
- *  }
+ * A scan flattens the innermost translated values across language packs.
  */
 export function scanBookCollection(bookCollection: LanguageBookCollection): ScanChunkCollection {
     // Use the first language pack as a reference
@@ -24,6 +20,7 @@ export function scanBookCollection(bookCollection: LanguageBookCollection): Scan
     const scanChunkCollection: ScanChunkCollection = {};
     for (const fileKey in referenceLanguagePack) {
         const file = referenceLanguagePack[fileKey];
+        const scanChunkFile: ScanChunkFile = {};
         for (const chunkKey in file.contents) {
             const chunk = file.contents[chunkKey];
             const scannedChunk: ScanChunk = {};
@@ -39,8 +36,9 @@ export function scanBookCollection(bookCollection: LanguageBookCollection): Scan
                 }
                 scannedChunk[key] = matchingValues;
             }
-            scanChunkCollection[chunkKey] = scannedChunk;
+            scanChunkFile[chunkKey] = scannedChunk;
         }
+        scanChunkCollection[fileKey] = scanChunkFile;
     }
    return scanChunkCollection;
 }

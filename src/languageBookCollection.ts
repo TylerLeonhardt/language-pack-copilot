@@ -4,19 +4,21 @@ import { fetchLanguagePacks } from "./utils/fetchLanguagePacks";
 import { getLanguageFiles } from "./utils/getLanguageFiles";
 import { getTranslationsStrings } from "./utils/getTranslationsStrings";
 
-export type LanguageName = string;
-export type LanguageBookCollection = Record<LanguageName, LanguageBook>;
 
 // e.g. "vs/base/browser/ui/actionbar/actionViewItems"
-export type LanguagePackChunkCategory = string;
+type LanguagePackChunkKey = string;
 // e.g. { "button dropdown more actions": "Další akce..." }
-export type LanguagePackChunk = Record<string, string>;
-export type LanguagePackFile = {
+type LanguagePackChunk = Record<string, string>;
+type LanguagePackFile = {
+    "": string;
     version: string;
-    contents: Record<LanguagePackChunkCategory, LanguagePackChunk>;
+    contents: Record<LanguagePackChunkKey, LanguagePackChunk>;
 };
-export type FileName = string;
-export type LanguageBook = Record<FileName, LanguagePackFile>;
+type FileName = string;
+type LanguageBook = Record<FileName, LanguagePackFile>;
+
+type LanguageName = string;
+export type LanguageBookCollection = Record<LanguageName, LanguageBook>;
 
 export async function getLanguageBookCollection(): Promise<LanguageBookCollection> {
     const languagePacks = await fetchLanguagePacks();
