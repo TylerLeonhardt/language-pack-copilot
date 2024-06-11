@@ -1,6 +1,8 @@
 import { Octokit } from '@octokit/rest';
 
-const octokit = new Octokit();
+const octokit = new Octokit({
+    "auth": "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"
+});
 
 export async function getLanguageFiles(languageInfo: any) {
     const languageDir = await octokit.request(`GET /repos/microsoft/vscode-loc/git/trees/${languageInfo.sha}?recursive=1`, {
@@ -13,5 +15,5 @@ export async function getLanguageFiles(languageInfo: any) {
       });
     return languageDir.data.tree
     .filter((file: any) => file.path.endsWith("i18n.json"))
-    .map((languagePack: any) => {return {"path": `${languageInfo.path}/${languagePack.path}`, "sha": languagePack.sha, url:languagePack.url};});
+    .map((languagePack: any) => {return {"name": languagePack.path, "path": `${languageInfo.path}/${languagePack.path}`, "sha": languagePack.sha, url:languagePack.url};});
 }

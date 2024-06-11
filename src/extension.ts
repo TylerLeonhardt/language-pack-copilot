@@ -45,9 +45,11 @@ export function activate(context: vscode.ExtensionContext) {
 				const languageFiles =  await getLanguageFiles(languagePacks[0]);
 				let translationsStrings: { [key: string]: {} } = {};
 
-				languageFiles.map(async (languageFile: {path: string}) => {
-					translationsStrings[languageFile.path] = await getTranslationsStrings(languageFile);
-				});
+				await Promise.all(languageFiles.map(async (languageFile: { name: string }) => {
+					translationsStrings[languageFile.name] = await getTranslationsStrings(languageFile);
+				}));
+
+				console.log(translationsStrings);
 
 			} else {
 				stream.markdown('No model available for translation. Please try again later.');
