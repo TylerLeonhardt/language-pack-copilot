@@ -9,23 +9,23 @@ import { getTranslationsStrings } from "./utils/getTranslationsStrings";
 type LanguagePackChunkKey = string;
 // e.g. { "button dropdown more actions": "Další akce..." }
 type LanguagePackChunk = Record<string, string>;
-type LanguagePackFile = {
+export type LanguagePackFile = {
     "": string;
     version: string;
     contents: Record<LanguagePackChunkKey, LanguagePackChunk>;
 };
 type FileName = string;
-type LanguageBook = Record<FileName, LanguagePackFile>;
+export type LanguagePack = Record<FileName, LanguagePackFile>;
 
 type LanguageName = string;
-export type LanguageBookCollection = Record<LanguageName, LanguageBook>;
+export type LanguagePackCollection = Record<LanguageName, LanguagePack>;
 
-export async function getLanguageBookCollection(): Promise<LanguageBookCollection> {
+export async function getLanguageBookCollection(): Promise<LanguagePackCollection> {
     const languagePacks = await fetchLanguagePacks();
-    const bookCollection: LanguageBookCollection = {};
+    const bookCollection: LanguagePackCollection = {};
     for (const pack of languagePacks) {
         const languageFiles =  await getLanguageFiles(pack);
-        const translationStrings: LanguageBook = {};
+        const translationStrings: LanguagePack = {};
         await Promise.all(languageFiles.map(async (languageFile: { name: string }) => {
             const translations = await getTranslationsStrings(languageFile);
             translationStrings[languageFile.name] = translations;
