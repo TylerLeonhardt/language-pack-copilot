@@ -1,9 +1,9 @@
-import { Octokit } from '@octokit/rest';
+import { getGitHubOctokit } from "../auth";
 import { ILanguagePack } from './fetchLanguagePacks';
 
-const octokit = new Octokit({
-    "auth": "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"
-});
+// const octokit = new Octokit({
+//     "auth": "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"
+// });
 
 export interface ILanguageFile {
   name: string;
@@ -12,6 +12,7 @@ export interface ILanguageFile {
 }
 
 export async function getLanguageFiles(languageInfo: ILanguagePack): Promise<ILanguageFile[]> {
+  const octokit = await getGitHubOctokit();
   const languageDir = await octokit.request(`GET /repos/microsoft/vscode-loc/git/trees/${languageInfo.sha}?recursive=1`, {
       owner: 'microsoft',
       repo: 'vscode-loc',

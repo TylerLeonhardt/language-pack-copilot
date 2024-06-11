@@ -1,11 +1,12 @@
-import { Octokit } from '@octokit/rest';
+import { getGitHubOctokit } from "../auth";
 import fetch from 'node-fetch';
 
-const octokit = new Octokit({
-    "auth": "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"
-});
+// const octokit = new Octokit({
+//     "auth": "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"
+// });
 
 export async function getTranslationsStrings(locationFile: any) {
+    const octokit = await getGitHubOctokit();
     const fileContent = await octokit.request(`GET /repos/microsoft/vscode-loc/contents/${locationFile.path}`, {
         owner: 'microsoft',
         repo: 'vscode-loc',
