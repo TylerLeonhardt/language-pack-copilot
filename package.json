@@ -54,8 +54,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "octokit": "^4.0.2",
     "@azure/identity": "^4.2.0",
+    "@octokit/rest": "^20.1.1",
     "openai": "^4.50.0"
   }
 }
