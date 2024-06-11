@@ -24,6 +24,9 @@ export async function getLanguageBookCollection(): Promise<LanguagePackCollectio
     const languagePacks = await fetchLanguagePacks();
     const bookCollection: LanguagePackCollection = {};
     for (const pack of languagePacks) {
+        if (pack.name === 'vscode-language-pack-qps-ploc') {
+            continue;
+        }
         const languageFiles =  await getLanguageFiles(pack);
         const translationStrings: LanguagePack = {};
         await Promise.all(languageFiles.map(async (languageFile: { name: string }) => {
