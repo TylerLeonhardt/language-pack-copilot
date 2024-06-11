@@ -5,29 +5,35 @@ import * as unzipper from 'unzipper';
 import path from "path";
 import * as os from "os";
 
+export interface LanguagePackScanChunkTranslation {
+    // e.g. "alertErrorMessage": ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"]
+    [id: string]: string[]
+}
+
 export interface LanguagePackTranslation {
     // e.g. { "button dropdown more actions": "Další akce..." }
     [id: string]: string
 }
-export interface LanguagePackFilePart {
+export interface LanguagePackFileContentPart {
     // e.g. "vs/base/browser/ui/actionbar/actionViewItems"
     [partKey: string]: LanguagePackTranslation
 }
-export interface LanguagePackFile {
+export interface LanguagePackFileContent {
     // This is usually just the copyright
     "": string;
     // This is usually 1.0.0
     version: string;
-    contents: LanguagePackFilePart;
+    contents: LanguagePackFileContentPart;
 };
-export interface LanguagePackContents {
+export interface LanguagePackFile {
+    // translations object in package.json but has contents loaded in
     // main.i18n.json
     id: string,
     path: string,
-    contents: LanguagePackFile
+    contents: LanguagePackFileContent
 }
 export interface LanguagePack {
-    contents: LanguagePackContents[]
+    contents: LanguagePackFile[]
     // TODO: include other unique properties from the package.json
     languageId: string;
     languageName: string;
@@ -83,7 +89,7 @@ export function loadLanguagePacks(filePath: string): LanguagePackCollection {
         const packageJson = JSON.parse(packageJsonContent);
         const { languageId, languageName, localizedLanguageName, translations } = packageJson.contributes.localizations[0];
 
-        const contents = new Array<LanguagePackContents>();
+        const contents = new Array<LanguagePackFile>();
         for (const translation of translations) {
             const translationPath = path.join(folderWithLanguagePacks, languagePackFolder, translation.path);
             const translationContent = readFileSync(translationPath, "utf-8");
