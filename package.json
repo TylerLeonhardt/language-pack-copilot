@@ -12,21 +12,6 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "chatParticipants": [
-      {
-        "id": "l10n-participant.translator",
-        "fullName": "Translator",
-        "name": "translator",
-        "description": "Translates language packs",
-        "isSticky": false,
-        "commands": [
-          {
-            "name": "translate",
-            "description": "Translate a language pack given at least one other language pack"
-          }
-        ]
-      }
-    ],
     "commands": [
       {
         "command": "l10n-participant.translate.example",
