@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import { translatePhrases } from './azureIntegration';
-import { getAndSaveLanguagePackCollection, getLanguagePackCollection, LanguagePack, LanguagePackFile } from './languagePackCollection';
-import { scanLanguagePackCollection, ScanChunkCollection } from './languagePackCollectionScanner';
+// import { scanLanguagePackCollection, ScanChunkCollection } from './languagePackCollectionScanner';
 import { exportCacheToFile as exportTranslationsCacheToFile } from './azureCache';
+import { DownloadVScodeLocRepoToATempLocation, LanguagePack, LanguagePackFile, LanguagePackFileContent, LanguagePackFileContentPart, LanguagePackTranslation, loadLanguagePacks } from './languagePacks';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -18,41 +18,62 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage(answer2 ?? 'NULL');
 	}));
 
+	let tempLocation: string | undefined;
 	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.fetch', async () => {
-		await getAndSaveLanguagePackCollection('languagePackCollection.json');
+		tempLocation = await DownloadVScodeLocRepoToATempLocation();
+		vscode.window.showInformationMessage('Downloaded to ' + tempLocation);
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.process', async () => {
-		const languagePackCollection = await getLanguagePackCollection();
+		const languagePackCollection = loadLanguagePacks(tempLocation!);
+
 		const referenceLanguagePack = languagePackCollection[Object.keys(languagePackCollection)[0]];
-		const newLanguagePack: LanguagePack = {};
-		const scanChunkCollection: ScanChunkCollection = scanLanguagePackCollection(languagePackCollection);
-		for (const fileKey in scanChunkCollection) {
-			const file = scanChunkCollection[fileKey];
-			const newLanguagePackFile: LanguagePackFile = {
-				"": referenceLanguagePack[fileKey][""],
-				"version": "1.0.0",
-				"contents": {}
-			};
-			for (const chunkKey in file) {
-				const chunk = file[chunkKey];
-				const newLanguagePackChunk: Record<string, string> = {};
-				for (const key in chunk) {
-					const values = chunk[key];
+		const newLanguagePack: LanguagePack = {
+			"languageId": 'en-gb',
+			"languageName": "British English",
+			"localizedLanguageName": "Bri'ish English",
+			"contents": []
+		};
+		for (let i = 0; i < referenceLanguagePack.contents.length; i++) {
+			const file = referenceLanguagePack.contents[i];
+			const fileContents = file.contents;
+			const newLanguagePackFileContentPart: LanguagePackFileContentPart = {};
+			for (const partKey in fileContents.contents) {
+				const part = fileContents.contents[partKey];
+				const newLanguagePackTranslations: LanguagePackTranslation = {};
+				for (const key in part) {
+					const values: string[] = [];
+					for (const languagePackName in languagePackCollection) {
+						const matchingPart = languagePackCollection[languagePackName].contents[i].contents.contents[partKey];
+						const matchingValue = matchingPart?.[key];
+						if (matchingValue !== undefined) {
+							values.push(matchingValue);
+						}
+					}
 					// e.g. ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"] => "Error: {0}"
 					const translation = await translatePhrases(values);
 					if (translation === null) {
-						vscode.window.showErrorMessage('Translation failed for key: ' + key + ' in chunk: ' + chunkKey + ' in file: ' + fileKey);
-						return;
+						vscode.window.showErrorMessage('Translation failed for key: ' + key);
+						continue;
 					}
-					newLanguagePackChunk[key] = translation;
+					newLanguagePackTranslations[key] = translation;
 				}
-				newLanguagePackFile.contents[chunkKey] = newLanguagePackChunk;
+				newLanguagePackFileContentPart[partKey] = newLanguagePackTranslations;
 			}
-			newLanguagePack[fileKey] = newLanguagePackFile;
-		}
 
-		fs.writeFileSync('newLanguagePack.json', JSON.stringify(newLanguagePack, null, 2));
+			const newLanguagePackFile: LanguagePackFile = {
+				"id": file.id,
+				"path": file.path,
+				"contents": {
+					"": file.contents[""],
+					"version": "1.0.0",
+					"contents": newLanguagePackFileContentPart
+				}
+			};
+			newLanguagePack.contents.push(newLanguagePackFile);
+		}
+		console.log(newLanguagePack);
+		// fs.writeFileSync('newLanguagePack.json', JSON.stringify(newLanguagePack, null, 2));
 		exportTranslationsCacheToFile();
 	}));
 }
