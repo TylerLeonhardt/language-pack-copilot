@@ -5,7 +5,7 @@ import { getLanguageFiles } from "./utils/getLanguageFiles";
 import { getTranslationsStrings } from "./utils/getTranslationsStrings";
 
 export type LanguageName = string;
-export type ILanguageBookCollection = Record<LanguageName, ILanguageBook>;
+export type LanguageBookCollection = Record<LanguageName, LanguageBook>;
 
 // e.g. "vs/base/browser/ui/actionbar/actionViewItems"
 export type LanguagePackChunkCategory = string;
@@ -16,14 +16,14 @@ export type LanguagePackFile = {
     contents: Record<LanguagePackChunkCategory, LanguagePackChunk>;
 };
 export type FileName = string;
-export type ILanguageBook = Record<FileName, LanguagePackFile>;
+export type LanguageBook = Record<FileName, LanguagePackFile>;
 
-export async function getLanguageBookCollection(): Promise<ILanguageBookCollection> {
+export async function getLanguageBookCollection(): Promise<LanguageBookCollection> {
     const languagePacks = await fetchLanguagePacks();
-    const bookCollection: ILanguageBookCollection = {};
+    const bookCollection: LanguageBookCollection = {};
     for (const pack of languagePacks) {
         const languageFiles =  await getLanguageFiles(pack);
-        const translationStrings: ILanguageBook = {};
+        const translationStrings: LanguageBook = {};
         await Promise.all(languageFiles.map(async (languageFile: { name: string }) => {
             const translations = await getTranslationsStrings(languageFile);
             translationStrings[languageFile.name] = translations;

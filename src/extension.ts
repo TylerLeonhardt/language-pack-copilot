@@ -5,7 +5,8 @@ import { fetchLanguagePacks } from './utils/fetchLanguagePacks';
 import { getLanguageFiles } from './utils/getLanguageFiles';
 import { getTranslationsStrings } from './utils/getTranslationsStrings';
 import { translatePhrases } from './azureIntegration';
-import { getAndSaveLanguageBookCollection } from './languageBookCollection';
+import { getAndSaveLanguageBookCollection, getLanguageBookCollection, LanguageBookCollection } from './languageBookCollection';
+import { scanBookCollection } from './bookCollectionScanner';
 
 const PARTICIPANT_ID = 'l10n-participant.translator';
 
@@ -74,6 +75,22 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.fetch', async () => {
 		await getAndSaveLanguageBookCollection('languageBookCollection.json');
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.process', async () => {
+		const bookCollection = await getLanguageBookCollection();
+		const scanChunkCollection = scanBookCollection(bookCollection);
+		// const referenceLanguagePack = bookCollection[Object.keys(bookCollection)[0]];
+		// const newLanguagePack: LanguageBook = {
+		// 	"": referenceLanguagePack[""],
+		// 	conten
+		// };
+
+		// //  ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"][];
+		// const phrases: string[][] = [];
+		// for (const phrase of phrases) {
+		// 	const answer = await translatePhrases(phrase);
+		// }
 	}));
 }
 

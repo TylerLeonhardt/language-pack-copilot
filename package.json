@@ -35,6 +35,10 @@
       {
         "command": "l10n-participant.translate.fetch",
         "title": "L10N Participant: Fetch and save language packs to disk"
+      },
+      {
+        "command": "l10n-participant.translate.process",
+        "title": "L10N Participant: Create new language pack"
       }
     ]
   },
