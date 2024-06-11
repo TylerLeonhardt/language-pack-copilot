@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import { LanguagePackCollection } from "./languagePackCollection";
 
 // e.g. "vs/base/browser/ui/actionbar/actionViewItems"
@@ -15,6 +16,10 @@ export type ScanChunkCollection = Record<FileName, ScanChunkFile>;
  * A scan flattens the innermost translated values across language packs.
  */
 export function scanLanguagePackCollection(bookCollection: LanguagePackCollection): ScanChunkCollection {
+    if (fs.existsSync('scanChunkCollection.json')) {
+        return JSON.parse(fs.readFileSync('scanChunkCollection.json', 'utf-8'));
+    }
+
     // Use the first language pack as a reference
     const referenceLanguagePack = bookCollection[Object.keys(bookCollection)[0]];
     const scanChunkCollection: ScanChunkCollection = {};
@@ -40,5 +45,6 @@ export function scanLanguagePackCollection(bookCollection: LanguagePackCollectio
         }
         scanChunkCollection[fileKey] = scanChunkFile;
     }
-   return scanChunkCollection;
+    fs.writeFileSync('scanChunkCollection.json', JSON.stringify(scanChunkCollection, null, 2));
+    return scanChunkCollection;
 }
