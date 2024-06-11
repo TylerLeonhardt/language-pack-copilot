@@ -30,7 +30,7 @@ export function addTranslation(key: string[], translations: string) {
     const cache = getCache();
     cache.set(JSON.stringify(key), translations);
 
-    // Export the cache every fifty translations
+    // Export the cache approximately every fifty translations
     if (cache.size % 50 === 0) {
         exportCacheToFile();
     }
