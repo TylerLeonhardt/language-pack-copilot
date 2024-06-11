@@ -6,7 +6,6 @@ export async function writeLanguagePack(languagePack: LanguagePack) {
   const newLanguagePackFolder = path.join(
     path.dirname(__dirname),
     `vscode-language-pack-${languagePack.languageId}`,
-    "translations"
   );
   for (const languageFile of languagePack.contents) {
     const fullPath = path.join(newLanguagePackFolder, languageFile.path);
