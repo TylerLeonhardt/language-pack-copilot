@@ -2,7 +2,7 @@ import { AzureOpenAI } from "openai";
 import { DefaultAzureCredential, getBearerTokenProvider } from "@azure/identity";
 
 export async function translatePhrases(phrases: string[]): Promise<string | null> {
-  // I am currently using the process.env["AZURE_OPENAI_API_KEY"] to hold the API key
+  // I am currently using process.env["AZURE_OPENAI_API_KEY"] to hold the API key
   // instead of using @azure/identity.
   // const scope = "https://cognitiveservices.azure.com/.default";
   // const azureADTokenProvider = getBearerTokenProvider(new DefaultAzureCredential(), scope);
@@ -15,18 +15,17 @@ export async function translatePhrases(phrases: string[]): Promise<string | null
   const result = await client.chat.completions.create({
     messages:  [
       { role: "system", content: "You are a translator. The phrases you translate will be related to Visual Studio Code, a code editor. Your goal is to output a sentence in English given the same sentence in multiple languages. Pick a concise translation that best captures the meaning of the original sentence." },
-      { role: "user", content: "Закрыть диалоговое окно, Zavřít dialogové okno, Cerrar cuadro de diálogo" }, // example 1 user input
-      { role: "assistant", content: "Close Dialog" }, // example 1 bot response
+      { role: "user", content: "Закрыть диалоговое окно, Zavřít dialogové okno, Cerrar cuadro de diálogo" }, // example 1 input
+      { role: "assistant", content: "Close Dialog" }, // example 1 response
+      { role: "user", content: "Soubory s více příponami, Dateien mit mehreren Erweiterunge, 複数の拡張子のファイル" }, // example 2 input
+      { role: "assistant", content: "Files with multiple extensions" }, // example 2 response
+      { role: "user", content: "あいまい一致, Correspondência Difusa, Benzer Öğe Eşleşmesi" }, // example 3 input
+      { role: "assistant", content: "Fuzzy Search" }, // example 3 response
       { role: "user", content: phrases.join(", ") },
     ],
     model: deployment,
     top_p: 0.95,
   });
-
-  // Example output: {content: 'Use Regular Expression', role: 'assistant'}
-  // for (const choice of result.choices) {
-  //   console.log(choice.message);
-  // }
 
   return result.choices[0].message.content;
 }
