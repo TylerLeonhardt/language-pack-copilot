@@ -15,7 +15,7 @@ export async function translatePhrases(phrases: string[]): Promise<string | null
   const client = new AzureOpenAI({ deployment, apiVersion, endpoint });
   const result = await client.chat.completions.create({
     messages:  [
-      { role: "system", content: "You are a translator. The phrases you translate will be related to Visual Studio Code, a code editor. Your goal is to output a sentence in English given the same sentence in multiple languages. Pick a concise translation that best captures the meaning of the original sentence." },
+      { role: "system", content: "You are a translator. The phrases you translate will be related to Visual Studio Code, a code editor. Your goal is to output a sentence in British English given the same sentence in multiple languages. Pick a concise translation that best captures the meaning of the original sentence." },
       { role: "user", content: "Закрыть диалоговое окно, Zavřít dialogové okno, Cerrar cuadro de diálogo" }, // example 1 input
       { role: "assistant", content: "Close Dialog" }, // example 1 response
       { role: "user", content: "Soubory s více příponami, Dateien mit mehreren Erweiterunge, 複数の拡張子のファイル" }, // example 2 input
