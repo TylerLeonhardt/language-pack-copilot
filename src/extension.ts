@@ -5,7 +5,7 @@ import { fetchLanguagePacks } from './utils/fetchLanguagePacks';
 import { getLanguageFiles } from './utils/getLanguageFiles';
 import { getTranslationsStrings } from './utils/getTranslationsStrings';
 import { translatePhrases } from './azureIntegration';
-import { getLanguageBookCollection } from './languageBookCollection';
+import { getAndSaveLanguageBookCollection } from './languageBookCollection';
 
 const PARTICIPANT_ID = 'l10n-participant.translator';
 
@@ -63,9 +63,6 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(participant);
 
 	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.example', async () => {
-		console.log('Getting book collection');
-		const bookCollection = await getLanguageBookCollection();
-		console.log('Got book collection', bookCollection);
 		const phrases: string[] = ["Usar expresión regular", "Použit regulární výraz", "Использовать регулярное выражение"];
 		const answer = await translatePhrases(phrases);
 		vscode.window.showInformationMessage(answer ?? 'NULL');
@@ -73,6 +70,10 @@ export function activate(context: vscode.ExtensionContext) {
 		const phrases2: string[] = ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"];
 		const answer2 = await translatePhrases(phrases2);
 		vscode.window.showInformationMessage(answer2 ?? 'NULL');
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.fetch', async () => {
+		await getAndSaveLanguageBookCollection('languageBookCollection.json');
 	}));
 }
 

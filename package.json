@@ -30,7 +30,11 @@
     "commands": [
       {
         "command": "l10n-participant.translate.example",
-        "title": "Run example Azure OpenAI translation"
+        "title": "L10N Participant: Run example Azure OpenAI translation"
+      },
+      {
+        "command": "l10n-participant.translate.fetch",
+        "title": "L10N Participant: Fetch and save language packs to disk"
       }
     ]
   },
