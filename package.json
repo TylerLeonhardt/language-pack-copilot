@@ -24,6 +24,10 @@
       {
         "command": "l10n-participant.translate.process",
         "title": "L10N Participant: Create new language pack"
+      },
+      {
+        "command": "l10n-participant.translate.export",
+        "title": "L10N Participant: Export and write language package"
       }
     ]
   },

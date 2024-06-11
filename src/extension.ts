@@ -4,6 +4,8 @@ import { translatePhrases } from './azureIntegration';
 import { getAndSaveLanguagePackCollection, getLanguagePackCollection, LanguagePack, LanguagePackFile } from './languagePackCollection';
 import { scanLanguagePackCollection, ScanChunkCollection } from './languagePackCollectionScanner';
 import { exportCacheToFile as exportTranslationsCacheToFile } from './azureCache';
+import { writeLanguagePack } from './writeLanguagePack';
+import { DownloadVScodeLocRepoToATempLocation, loadLanguagePacks } from './languagePacks';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -55,6 +57,15 @@ export function activate(context: vscode.ExtensionContext) {
 		fs.writeFileSync('newLanguagePack.json', JSON.stringify(newLanguagePack, null, 2));
 		exportTranslationsCacheToFile();
 	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.export', async () => {
+		const filePath = await DownloadVScodeLocRepoToATempLocation();
+		const collection = loadLanguagePacks(filePath);
+		const languagePack = collection['cs'];
+		
+		await writeLanguagePack(languagePack);
+	}));
+
 }
 
 // This method is called when your extension is deactivated
