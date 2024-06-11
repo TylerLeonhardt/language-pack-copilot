@@ -1,12 +1,13 @@
 import { AzureOpenAI } from "openai";
-import { DefaultAzureCredential, getBearerTokenProvider } from "@azure/identity";
+import { addTranslation as addTranslationToCache, getTranslation as getTranslationFromCache } from "./azureCache";
 
 export async function translatePhrases(phrases: string[]): Promise<string | null> {
-  // I am currently using process.env["AZURE_OPENAI_API_KEY"] to hold the API key
-  // instead of using @azure/identity.
-  // const scope = "https://cognitiveservices.azure.com/.default";
-  // const azureADTokenProvider = getBearerTokenProvider(new DefaultAzureCredential(), scope);
+  const cachedEntry = getTranslationFromCache(phrases);
+  if (cachedEntry) {
+    return cachedEntry;
+  }
 
+  // I am currently using process.env["AZURE_OPENAI_API_KEY"] to hold the API key instead of using @azure/identity.
   // The name of the deployment in Azure OpenAI that we want to use.
   const deployment = "Turbo";
   const endpoint = "https://vscode-openai.openai.azure.com/";
@@ -27,5 +28,12 @@ export async function translatePhrases(phrases: string[]): Promise<string | null
     top_p: 0.95,
   });
 
-  return result.choices[0].message.content;
+  const translation = result.choices[0].message.content;
+  if (!translation) {
+    console.error("Translation failed for phrases: ", phrases);
+    return null;
+  }
+
+  addTranslationToCache(phrases, translation);
+  return translation;
 }

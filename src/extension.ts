@@ -1,11 +1,9 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
-import { fetchLanguagePacks } from './utils/fetchLanguagePacks';
-import { getLanguageFiles } from './utils/getLanguageFiles';
-import { getTranslationsStrings } from './utils/getTranslationsStrings';
 import { translatePhrases } from './azureIntegration';
-import { getAndSaveLanguageBookCollection, getLanguageBookCollection, LanguagePack, LanguagePackCollection, LanguagePackFile } from './languagePackCollection';
+import { getAndSaveLanguagePackCollection, getLanguagePackCollection, LanguagePack, LanguagePackFile } from './languagePackCollection';
 import { scanLanguagePackCollection, ScanChunkCollection } from './languagePackCollectionScanner';
+import { exportCacheToFile as exportTranslationsCacheToFile } from './azureCache';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -21,11 +19,11 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.fetch', async () => {
-		await getAndSaveLanguageBookCollection('languageBookCollection.json');
+		await getAndSaveLanguagePackCollection('languagePackCollection.json');
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.process', async () => {
-		const languagePackCollection = await getLanguageBookCollection();
+		const languagePackCollection = await getLanguagePackCollection();
 		const referenceLanguagePack = languagePackCollection[Object.keys(languagePackCollection)[0]];
 		const newLanguagePack: LanguagePack = {};
 		const scanChunkCollection: ScanChunkCollection = scanLanguagePackCollection(languagePackCollection);
@@ -55,6 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 		fs.writeFileSync('newLanguagePack.json', JSON.stringify(newLanguagePack, null, 2));
+		exportTranslationsCacheToFile();
 	}));
 }
 

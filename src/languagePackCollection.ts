@@ -4,7 +4,6 @@ import { fetchLanguagePacks } from "./utils/fetchLanguagePacks";
 import { getLanguageFiles } from "./utils/getLanguageFiles";
 import { getTranslationsStrings } from "./utils/getTranslationsStrings";
 
-
 // e.g. "vs/base/browser/ui/actionbar/actionViewItems"
 type LanguagePackChunkKey = string;
 // e.g. { "button dropdown more actions": "Další akce..." }
@@ -20,9 +19,9 @@ export type LanguagePack = Record<FileName, LanguagePackFile>;
 type LanguageName = string;
 export type LanguagePackCollection = Record<LanguageName, LanguagePack>;
 
-export async function getLanguageBookCollection(): Promise<LanguagePackCollection> {
+export async function getLanguagePackCollection(): Promise<LanguagePackCollection> {
     const languagePacks = await fetchLanguagePacks();
-    const bookCollection: LanguagePackCollection = {};
+    const collection: LanguagePackCollection = {};
     for (const pack of languagePacks) {
         if (pack.name === 'vscode-language-pack-qps-ploc') {
             continue;
@@ -33,12 +32,12 @@ export async function getLanguageBookCollection(): Promise<LanguagePackCollectio
             const translations = await getTranslationsStrings(languageFile);
             translationStrings[languageFile.name] = translations;
         }));
-        bookCollection[pack.name] = translationStrings;
+        collection[pack.name] = translationStrings;
     }
-    return bookCollection;
+    return collection;
 }
 
-export async function getAndSaveLanguageBookCollection(fileName: string): Promise<void> {
-    const bookCollection = await getLanguageBookCollection();
-    fs.writeFileSync(fileName, JSON.stringify(bookCollection, null, 2));
+export async function getAndSaveLanguagePackCollection(fileName: string): Promise<void> {
+    const collection = await getLanguagePackCollection();
+    fs.writeFileSync(fileName, JSON.stringify(collection, null, 2));
 }
