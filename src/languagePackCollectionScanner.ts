@@ -1,20 +1,20 @@
-import { LanguageBookCollection as LanguageBookCollection } from "./languageBookCollection";
+import { LanguagePackCollection } from "./languagePackCollection";
 
 // e.g. "vs/base/browser/ui/actionbar/actionViewItems"
 type ScanChunkKey = string;
 // e.g. "alertErrorMessage": ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"]
 type ScanChunk = Record<string, string[]>;
 
-type ScanChunkFile = Record<ScanChunkKey, ScanChunk>;
+export type ScanChunkFile = Record<ScanChunkKey, ScanChunk>;
 
 type FileName = string;
-type ScanChunkCollection = Record<FileName, ScanChunkFile>;
+export type ScanChunkCollection = Record<FileName, ScanChunkFile>;
 
 /**
  * A book collection is a collection of language packs where the keys are language packs.
  * A scan flattens the innermost translated values across language packs.
  */
-export function scanBookCollection(bookCollection: LanguageBookCollection): ScanChunkCollection {
+export function scanLanguagePackCollection(bookCollection: LanguagePackCollection): ScanChunkCollection {
     // Use the first language pack as a reference
     const referenceLanguagePack = bookCollection[Object.keys(bookCollection)[0]];
     const scanChunkCollection: ScanChunkCollection = {};
