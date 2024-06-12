@@ -52,8 +52,8 @@ async function run() {
                     translation = null;
                 }
                 if (translation === null) {
-                    // Default to the reference language pack
-                    translation = part[key];
+                    // Default to empty string so it will use English.
+                    translation = "";
                 }
                 newLanguagePackTranslations[key] = translation;
             }
