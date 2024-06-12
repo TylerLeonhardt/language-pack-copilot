@@ -30,7 +30,7 @@ export async function translatePhrases(phrases: string[]): Promise<string | null
 
   const translation = result.choices[0].message.content;
   if (!translation) {
-    console.error("Translation failed for phrases: ", phrases);
+    console.error("Translation failed for phrases: ", phrases, " with result: ", JSON.stringify(result, null, 2));
     return null;
   }
 

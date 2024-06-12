@@ -1,9 +1,12 @@
 import * as fs from "fs";
+import path from "path";
+
+const cacheFilePath = path.resolve(__dirname, 'cache.json');
 
 export function initializeCacheFromFile(): Map<string, string> {
     const initCache = new Map<string, string>();
-    if (fs.existsSync('cache.json')) {
-        const cacheData = fs.readFileSync('cache.json', 'utf-8');
+    if (fs.existsSync(cacheFilePath)) {
+        const cacheData = fs.readFileSync(cacheFilePath, 'utf-8');
         const cacheEntries = JSON.parse(cacheData);
         for (const key in cacheEntries) {
             initCache.set(key, cacheEntries[key]);
@@ -38,5 +41,5 @@ export function addTranslation(key: string[], translations: string) {
 
 export function exportCacheToFile() {
     const cache = getCache();
-    fs.writeFileSync('cache.json', JSON.stringify(Object.fromEntries(cache), null, 2));
+    fs.writeFileSync(cacheFilePath, JSON.stringify(Object.fromEntries(cache), null, 2));
 }

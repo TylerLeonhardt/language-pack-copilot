@@ -1,32 +1,16 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import { translatePhrases } from './azureIntegration';
-// import { scanLanguagePackCollection, ScanChunkCollection } from './languagePackCollectionScanner';
 import { exportCacheToFile as exportTranslationsCacheToFile } from './azureCache';
-import { DownloadVScodeLocRepoToATempLocation, LanguagePack, LanguagePackFile, LanguagePackFileContent, LanguagePackFileContentPart, LanguagePackTranslation, loadLanguagePacks } from './languagePacks';
+import { DownloadVScodeLocRepoToATempLocation, LanguagePack, LanguagePackFile, LanguagePackFileContentPart, LanguagePackTranslation, loadLanguagePacks } from './languagePacks';
 import { writeLanguagePack } from './writeLanguagePack';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.example', async () => {
-		const phrases: string[] = ["Usar expresión regular", "Použit regulární výraz", "Использовать регулярное выражение"];
-		const answer = await translatePhrases(phrases);
-		vscode.window.showInformationMessage(answer ?? 'NULL');
-
-		const phrases2: string[] = ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"];
-		const answer2 = await translatePhrases(phrases2);
-		vscode.window.showInformationMessage(answer2 ?? 'NULL');
-	}));
-
-	let tempLocation: string | undefined;
-	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.fetch', async () => {
-		tempLocation = await DownloadVScodeLocRepoToATempLocation();
-		vscode.window.showInformationMessage('Downloaded to ' + tempLocation);
-	}));
-
-	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.process', async () => {
-		const languagePackCollection = loadLanguagePacks(tempLocation!);
+	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.create', async () => {
+		const tempLocation = await DownloadVScodeLocRepoToATempLocation();
+		const languagePackCollection = loadLanguagePacks(tempLocation);
 
 		const referenceLanguagePack = languagePackCollection[Object.keys(languagePackCollection)[0]];
 		const newLanguagePack: LanguagePack = {
