@@ -24,7 +24,7 @@ export async function translatePhrases(phrases: string[], targetLanguage: string
       // { role: "assistant", content: "Fuzzy Search" },
       // { role: "user", content: "{0}: {1}, {0}: {1}, {0}: {1}, {0}: {1}, {0}: {1}" },
       // { role: "assistant", content: "{0}: {1}" },
-      { role: "user", content: phrases.join(", ") },
+      { role: "user", content: phrases.join("\t") },
     ],
     model: deployment,
     top_p: 0.95,
