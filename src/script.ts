@@ -42,7 +42,7 @@ async function run() {
                 console.log(`Translating ${key}...`);
                 let translation: string | null;
                 try {
-                    translation = await translatePhrases(values);
+                    translation = await translatePhrases(values, languageName);
                 } catch (error) {
                     console.error("Translation failed for key: ", key, " with error: ", error);
                     translation = null;

@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import path from "path";
 
-const cacheFilePath = path.resolve(__dirname, 'cache.json');
+const cacheFilePath = path.resolve('cache.json');
 
 export function initializeCacheFromFile(): Map<string, string> {
     const initCache = new Map<string, string>();
