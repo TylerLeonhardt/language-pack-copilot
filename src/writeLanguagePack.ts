@@ -2,13 +2,15 @@ import * as fs from "fs";
 import * as path from "path";
 import { LanguagePack } from "./languagePacks";
 
-export async function writeLanguagePack(languagePack: LanguagePack) {
-  const newLanguagePackFolder = path.join(
-    path.dirname(__dirname),
-    `vscode-language-pack-${languagePack.languageId}`,
-  );
+export async function overwriteLanguagePack(languagePack: LanguagePack) {
+  // TODO: this is really an implementation detail...
+  try {
+    fs.rmdirSync('translations', { recursive: true });
+  } catch (e) {
+    console.warn(e);
+  }
   for (const languageFile of languagePack.contents) {
-    const fullPath = path.join(newLanguagePackFolder, languageFile.path);
+    const fullPath = path.resolve(languageFile.path);
     const content = JSON.stringify(languageFile.contents, null, 2); 
     const dirPath = path.dirname(fullPath);
 

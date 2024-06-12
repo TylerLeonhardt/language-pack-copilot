@@ -1,7 +1,8 @@
 import { translatePhrases } from "./azureIntegration";
 import { exportCacheToFile as exportTranslationsCacheToFile } from './azureCache';
 import { downloadVSCodeLocToTempLocation, LanguagePack, LanguagePackFile, LanguagePackFileContentPart, LanguagePackTranslation, loadLanguagePacks } from "./languagePacks";
-import { writeLanguagePack } from "./writeLanguagePack";
+import { overwriteLanguagePack } from "./writeLanguagePack";
+import { readFileSync } from 'fs';
 
 async function run() {
     console.log('Downloading & extracting vscode-loc repo...');
@@ -11,12 +12,16 @@ async function run() {
 
     // Set the reference language pack to French for now.
     const referenceLanguagePack = languagePackCollection['fr'];
-    const newLanguagePack: LanguagePack = {
-        "languageId": 'en-gb',
-        "languageName": "English (UK)",
-        "localizedLanguageName": "English (UK)",
-        "contents": []
-    };
+
+    const packageJsonPath = './package.json';
+    let packageJson: any = undefined;
+    try {
+        packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+    } catch(e) {
+        throw new Error('Unable to read package.json. Are you running this script with a CWD of the root of the langauge pack?');
+    }
+    const { languageId, languageName, localizedLanguageName } = packageJson.contributes.localizations[0];
+    const newLanguagePack: LanguagePack = { languageId, languageName, localizedLanguageName, contents: [] };
     for (let i = 0; i < referenceLanguagePack.contents.length; i++) {
         const file = referenceLanguagePack.contents[i];
         const fileContents = file.contents;
@@ -63,7 +68,7 @@ async function run() {
         newLanguagePack.contents.push(newLanguagePackFile);
     }
     console.log('Writing language pack...');
-    await writeLanguagePack(newLanguagePack);
+    await overwriteLanguagePack(newLanguagePack);
     console.log('Updating cache one last time...');
     exportTranslationsCacheToFile();
     console.log('DONE!');

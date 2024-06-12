@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import { translatePhrases } from './azureIntegration';
 import { exportCacheToFile as exportTranslationsCacheToFile } from './azureCache';
 import { downloadVSCodeLocToTempLocation, LanguagePack, LanguagePackFile, LanguagePackFileContentPart, LanguagePackTranslation, loadLanguagePacks } from './languagePacks';
-import { writeLanguagePack } from './writeLanguagePack';
+import { overwriteLanguagePack } from './writeLanguagePack';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -65,7 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
 			};
 			newLanguagePack.contents.push(newLanguagePackFile);
 		}
-		await writeLanguagePack(newLanguagePack);
+		await overwriteLanguagePack(newLanguagePack);
 
 		// Export translations cache for future runs
 		exportTranslationsCacheToFile();
@@ -79,7 +79,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const collection = loadLanguagePacks(filePath);
 		const languagePack = collection['cs'];
 
-		await writeLanguagePack(languagePack);
+		await overwriteLanguagePack(languagePack);
 	}));
 
 }
