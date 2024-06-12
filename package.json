@@ -10,19 +10,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "l10n-participant.translate.create",
-        "title": "L10N Participant: Create new language pack"
-      },
-      {
-        "command": "l10n-participant.translate.export",
-        "title": "L10N Participant: Export and write language package"
-      }
-    ]
-  },
+  "main": "./out/script.js",
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
