@@ -47,7 +47,7 @@ export interface LanguagePackCollection {
  * downloads and extracts vscode-loc to a temp location and returns that location
  * @returns file path
  */
-export async function DownloadVScodeLocRepoToATempLocation(): Promise<string> {
+export async function downloadVSCodeLocToTempLocation(): Promise<string> {
     const tempLocation = path.join(os.tmpdir(), 'microsoft-vscode-loc-main');
     if (existsSync(tempLocation)) {
         const extractedFolders = readdirSync(tempLocation, { withFileTypes: true })
@@ -105,5 +105,5 @@ export function loadLanguagePacks(filePath: string): LanguagePackCollection {
 }
 
 // USAGE
-// const filePath = await DownloadVScodeLocRepoToATempLocation();
+// const filePath = await downloadVSCodeLocToTempLocation();
 // const collection = loadLanguagePacks(filePath);

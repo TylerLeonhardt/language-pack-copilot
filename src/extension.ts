@@ -2,14 +2,14 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import { translatePhrases } from './azureIntegration';
 import { exportCacheToFile as exportTranslationsCacheToFile } from './azureCache';
-import { DownloadVScodeLocRepoToATempLocation, LanguagePack, LanguagePackFile, LanguagePackFileContentPart, LanguagePackTranslation, loadLanguagePacks } from './languagePacks';
+import { downloadVSCodeLocToTempLocation, LanguagePack, LanguagePackFile, LanguagePackFileContentPart, LanguagePackTranslation, loadLanguagePacks } from './languagePacks';
 import { writeLanguagePack } from './writeLanguagePack';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.create', async () => {
-		const tempLocation = await DownloadVScodeLocRepoToATempLocation();
+		const tempLocation = await downloadVSCodeLocToTempLocation();
 		const languagePackCollection = loadLanguagePacks(tempLocation);
 
 		// Set the reference language pack to French for now.
@@ -75,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.export', async () => {
-		const filePath = await DownloadVScodeLocRepoToATempLocation();
+		const filePath = await downloadVSCodeLocToTempLocation();
 		const collection = loadLanguagePacks(filePath);
 		const languagePack = collection['cs'];
 
