@@ -12,7 +12,9 @@ export function activate(context: vscode.ExtensionContext) {
 		const tempLocation = await DownloadVScodeLocRepoToATempLocation();
 		const languagePackCollection = loadLanguagePacks(tempLocation);
 
-		const referenceLanguagePack = languagePackCollection[Object.keys(languagePackCollection)[0]];
+		// Set the reference language pack to French for now.
+		// We have no English language pack to use as a reference.
+		const referenceLanguagePack = languagePackCollection['fr'];
 		const newLanguagePack: LanguagePack = {
 			"languageId": 'en-gb',
 			"languageName": "British English",
@@ -36,10 +38,16 @@ export function activate(context: vscode.ExtensionContext) {
 						}
 					}
 					// e.g. ["Ошибка: {0}", "Chyba: {0}", "오류: {0}"] => "Error: {0}"
-					const translation = await translatePhrases(values);
+					let translation: string | null;
+					try {
+						translation = await translatePhrases(values);
+					} catch (error) {
+						console.error("Translation failed for key: ", key, " with error: ", error);
+						translation = null;
+					}
 					if (translation === null) {
-						vscode.window.showErrorMessage('Translation failed for key: ' + key);
-						continue;
+						// Default to the reference language pack
+						translation = part[key];
 					}
 					newLanguagePackTranslations[key] = translation;
 				}
@@ -59,8 +67,11 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		await writeLanguagePack(newLanguagePack);
 
-		// fs.writeFileSync('newLanguagePack.json', JSON.stringify(newLanguagePack, null, 2));
+		// Export translations cache for future runs
 		exportTranslationsCacheToFile();
+
+		console.log('Done translating');
+		vscode.window.showInformationMessage('Done translating');
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('l10n-participant.translate.export', async () => {
