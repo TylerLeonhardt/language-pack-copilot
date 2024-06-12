@@ -9,7 +9,7 @@ export async function translatePhrases(phrases: string[], targetLanguage: string
 
   // I am currently using process.env["AZURE_OPENAI_API_KEY"] to hold the API key instead of using @azure/identity.
   // The name of the deployment in Azure OpenAI that we want to use.
-  const deployment = "Turbo";
+  const deployment = "gpt-4o";
   const endpoint = "https://vscode-openai.openai.azure.com/";
   const apiVersion = "2024-04-01-preview"; // Not sure what are the possible values here.
   const client = new AzureOpenAI({ deployment, apiVersion, endpoint });
