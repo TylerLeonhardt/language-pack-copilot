@@ -57,7 +57,8 @@ export function activate(context: vscode.ExtensionContext) {
 			};
 			newLanguagePack.contents.push(newLanguagePackFile);
 		}
-		console.log(newLanguagePack);
+		await writeLanguagePack(newLanguagePack);
+
 		// fs.writeFileSync('newLanguagePack.json', JSON.stringify(newLanguagePack, null, 2));
 		exportTranslationsCacheToFile();
 	}));
@@ -66,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const filePath = await DownloadVScodeLocRepoToATempLocation();
 		const collection = loadLanguagePacks(filePath);
 		const languagePack = collection['cs'];
-		
+
 		await writeLanguagePack(languagePack);
 	}));
 
