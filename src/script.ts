@@ -31,8 +31,12 @@ async function run() {
             const newLanguagePackTranslations: LanguagePackTranslation = {};
             for (const key in part) {
                 const values: string[] = [];
-                for (const languagePackName in languagePackCollection) {
-                    const matchingPart = languagePackCollection[languagePackName].contents[i].contents.contents[partKey];
+                for (const languagePackId in languagePackCollection) {
+                    // skip the pseudo-language pack
+                    if (languagePackId === 'qps-ploc') {
+                        continue;
+                    }
+                    const matchingPart = languagePackCollection[languagePackId].contents[i].contents.contents[partKey];
                     const matchingValue = matchingPart?.[key];
                     if (matchingValue !== undefined) {
                         values.push(matchingValue);
