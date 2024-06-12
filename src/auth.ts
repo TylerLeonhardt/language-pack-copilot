@@ -5,9 +5,9 @@ export async function getGitHubOctokit(): Promise<Octokit> {
     if (octokit) {
         return octokit;
     }
-    if (process.env.GITHUB_PAT) {
+    if (process.env.GITHUB_TOKEN || process.env.GITHUB_PAT) {
         octokit = new Octokit({
-            auth: process.env.GITHUB_PAT
+            auth: process.env.GITHUB_TOKEN ?? process.env.GITHUB_PAT
         });
         return octokit;
     }
