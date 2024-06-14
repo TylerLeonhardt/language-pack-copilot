@@ -21,6 +21,7 @@ async function run() {
         throw new Error('Unable to read package.json. Are you running this script with a CWD of the root of the langauge pack?');
     }
     const { languageId, languageName, localizedLanguageName } = packageJson.contributes.localizations[0];
+    console.log(`Language: ${languageName}(${languageId})`);
     const newLanguagePack: LanguagePack = { languageId, languageName, localizedLanguageName, contents: [] };
     for (let i = 0; i < referenceLanguagePack.contents.length; i++) {
         const file = referenceLanguagePack.contents[i];
